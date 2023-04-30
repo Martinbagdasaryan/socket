@@ -1,0 +1,68 @@
+.home {
+  height: 979px;
+  background: rgb(119 144 225);
+}
+
+.homess {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.inputTopName {
+  margin: 0px;
+  display: flex;
+  justify-content: center;
+}
+
+.inputName {
+  height: 30px;
+  border-radius: 10px;
+  width: 1000px;
+}
+
+.usreName {
+  display: flex;
+  justify-content: right;
+  height: 50px;
+  border: 4px solid rgb(68 66 90);
+  border-radius: 10px;
+  gap: 40px;
+}
+.buttonExit {
+  width: 100px;
+  background: #5a5aff;
+  border-radius: 8px;
+}
+
+.roomsel {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 500px;
+  gap: 10px;
+}
+
+.buttonRooms {
+  border-radius: 10px;
+  width: 300px;
+  height: 300px;
+}
+
+.homeInput {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  min-width: 100px;
+  max-width: 400px;
+}
+
+.errorMessage{
+
+  margin: 0px;
+  display: flex;
+  justify-content: center;
+  color: red;
+}
