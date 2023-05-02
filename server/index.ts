@@ -18,7 +18,7 @@ const IO = new Server(server, {
 });
 
 app.use(cors({ origin: "http://localhost:5173" }));
-
+ 
 const arrMessages: IArrMessages[] = [];
 const arrRoom: IArrRoom[] = [];
 const users: IUser[] = [];
