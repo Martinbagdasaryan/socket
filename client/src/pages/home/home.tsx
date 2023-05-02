@@ -1,32 +1,39 @@
 import React, { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { IProps } from "../../types/interfaces";
 import axios from "axios";
 
 import "./home.css";
+import { IProps, IRoom, IUser } from "../../types/interfaces";
 
 const Home: FC<IProps> = ({ setRoom, socket }) => {
   const navigate: ReturnType<typeof useNavigate> = useNavigate();
-  const [user, setUser] = useState<string>("");
-  const [flag, setFlag] = useState<number>(0);
-  const [users, setUsers] = useState<any>([]);
-  const [redFlag, setRedFlag] = useState<any>(0);
 
-  const room_namber: { id: string; background: string }[] = [
+  const [user, setUser] = useState<string>("");
+  const [flag, setFlag] = useState<boolean>(false);
+  const [users, setUsers] = useState<IUser[]>([]);
+  const [redFlag, setRedFlag] = useState<boolean>(false);
+
+  const random = Math.random();
+
+  const room_namber: { id: number; background: string; roomId: string }[] = [
     {
-      id: "1",
+      id: random,
+      roomId: "1",
       background: "rgb(174 255 225)",
     },
     {
-      id: "2",
+      id: random,
+      roomId: "2",
       background: "rgb(255 146 232)",
     },
     {
-      id: "3",
+      id: random,
+      roomId: "3",
       background: "rgb(254 255 174)",
     },
     {
-      id: "4",
+      id: random,
+      roomId: "4",
       background: "rgb(174 229 255)",
     },
   ];
@@ -35,60 +42,74 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
     getUsers();
   }, []);
 
+  useEffect(() => {
+    soketUser();
+  }, [socket]);
+
   const getUsers = async (): Promise<void> => {
     const res = await axios.get("http://localhost:4000/api/user");
-    setUsers(res.data.users);
+    setUsers(res.data);
   };
 
+  const soketUser = () => {
+    socket.on("newUserResponse", (data) => {
+      setUsers(data);
+    });
+  };
 
-  const room = async (el: { id: string; background: string }): Promise<void> => {
-    let userNumber=0
-    if (localStorage.getItem("user") === null && user !== "") {
+  const room = async (el: IRoom): Promise<void> => {
+    let isUserExist = false;
+    const userData:string|null = localStorage.getItem("user");
 
-      users?.map((elm: any) => {
+    if (userData === null && user !== "") {
+      users?.map((elm: IUser) => {
         if (elm.user === user) {
-           setRedFlag(1);
-           userNumber+=1
+          setRedFlag(true);
+
+          isUserExist = true;
         }
       });
-      const GItme = ()=>{
-        if(userNumber===0){
-     
-          localStorage.setItem("user", user);
-          setFlag(0);
-          setRedFlag(0);
-          console.log(1);
-        }  
-      }
-    
-    await GItme();
-} else {
-           
-      setFlag(1);
-    }
 
-    localStorage.setItem("room", el.id);
-    let roomNumber=0
-    if (localStorage.getItem("user")) {
-      setRoom(el);
-      socket.emit("room", el);
-      const user = localStorage.getItem("user");
-      const room = localStorage.getItem("room");
-      users?.map((elm: any) => {
-        if (elm.user === user && elm.room===room) {
-           roomNumber+=1
-        }
-      });
-      if(roomNumber===0){
-        
-        socket.emit("newUser", { id:Math.random(), user: user, socketId: socket.id, room: room });
-      }
+      if (!isUserExist) {
+        localStorage.setItem("user", user);
+        setFlag(false);
+        setRedFlag(false);
 
-      navigate("/chat");
+        roomCheck(el, user);
+      }
+    } else {
+      setFlag(true);
+      roomCheck(el, userData);
     }
   };
 
-  const Exit = (e: React.SyntheticEvent) => {
+  const roomCheck = (el:IRoom, userData:string|null) => {
+
+    setRoom(el);
+    socket.emit("room", el);
+
+    let isRoomExist = false;
+    localStorage.setItem("room", el.roomId);
+
+    users?.map((elm: IUser) => {
+      if (elm.user === userData && elm.room === el.roomId) {
+        isRoomExist = true;
+      }
+    });
+
+    if (!isRoomExist) {
+      socket.emit("newUser", {
+        id: random,
+        user: userData,
+        socketId: socket.id,
+        room: el.roomId,
+      });
+    }
+
+    navigate("/chat");
+  };
+
+  const exit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     localStorage.removeItem("user");
     navigate("/");
@@ -97,19 +118,19 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
   return (
     <div>
       <div className="home">
-        <div className="homess">
+        <div className="homes">
           <div>
             {localStorage.getItem("user") === null ? (
               <div>
                 {" "}
-                <h3 className="inputTopName">Name</h3>
+                <h3 className="userName">Name</h3>
                 <input
                   type="text"
                   className="inputName"
                   placeholder="   writing the name is requird"
                   onChange={(e) => setUser(e.target.value)}
                 />
-                {flag === 1 ? (
+                {flag ? (
                   <div>
                     {" "}
                     <h3 className="errorMessage">
@@ -119,10 +140,12 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
                 ) : (
                   <div></div>
                 )}
-                {redFlag === 1 ? (
+                {redFlag ? (
                   <div>
                     {" "}
-                    <h3 className="errorMessage">there is a person with this name ,choose your unique name</h3>
+                    <h3 className="errorMessage">
+                      there is a person with this name ,choose your unique name
+                    </h3>
                   </div>
                 ) : (
                   <div></div>
@@ -131,7 +154,7 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
             ) : (
               <div className="usreName">
                 <h1 className="homeInput">{localStorage.getItem("user")}</h1>
-                <button className="buttonExit" onClick={Exit}>
+                <button className="buttonExit" onClick={exit}>
                   Exit
                 </button>
               </div>
@@ -141,8 +164,8 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
         </div>
 
         <div className="roomsel">
-          {room_namber.map((el) => (
-            <div>
+          {room_namber.map((el, index) => (
+            <div key={index}>
               <button
                 className="buttonRooms"
                 style={{
@@ -150,7 +173,7 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
                 }}
                 onClick={() => room(el)}
               >
-                room{el.id}
+                room {el.roomId}
               </button>
             </div>
           ))}

@@ -3,7 +3,7 @@
   background: rgb(119 144 225);
 }
 
-.homess {
+.homes {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -11,7 +11,7 @@
   height: 200px;
 }
 
-.inputTopName {
+.userName {
   margin: 0px;
   display: flex;
   justify-content: center;

@@ -1,31 +1,24 @@
-import React, { FC, useEffect, useState } from "react";
 import axios from "axios";
+import React, { FC, useEffect, useState } from "react";
 
+import "./online.css";
 import {
   IRoom,
   ISocketAndRoom,
   IUser,
   IUserMessage,
 } from "../types/interfaces";
-import "./online.css";
 
 const Online: FC<ISocketAndRoom> = ({ socket, room }) => {
-  const [userOnline, setUserOnline] = useState<IUser[]>([]);
-  const [user, setUser] = useState<IUserMessage[]>([]);
+  
   const [rooms, setRooms] = useState<IRoom>();
-  const [socketsId, setSocketsId] = useState<any>();
-  const [getSocketsId, setGetSocketId] = useState<any>();
-
+  const [user, setUser] = useState<IUserMessage[]>([]);
+  const [userOnline, setUserOnline] = useState<IUser[]>([]);
 
   useEffect((): void => {
     getUsers();
     getRooms();
-    getsoketId();
   }, []);
-
-  useEffect(() => {
-    disconnect();
-  }, [socket]);
 
   useEffect((): void => {
     socket.on("newUserResponse", (data): void => {
@@ -35,34 +28,14 @@ const Online: FC<ISocketAndRoom> = ({ socket, room }) => {
 
   const getUsers = async (): Promise<void> => {
     const res = await axios.get("http://localhost:4000/api/user");
-    setUserOnline(res.data.users);
+    setUserOnline(res.data);
   };
 
   const getRooms = async (): Promise<void> => {
     const res = await axios.get("http://localhost:4000/api/room");
-    let a = res.data.arrRoom;
-    setRooms(res.data.arrRoom[a.length - 1]);
+    let a = res.data;
+    setRooms(res.data[a.length - 1]);
   };
-
-  const disconnect = () => {
-    socket.on("usersDisconnect", (userId) => {
-      setSocketsId(userId);
-    });
-  };
-
-
-  const getsoketId = async (): Promise<void> => {
-    const res = await axios.get("http://localhost:4000/api/socketId");
-
-    setGetSocketId(res.data);
-  };
-
-console.log(1,user);
-console.log(2,userOnline);
-
-
-  
-  
 
   return (
     <div
@@ -72,12 +45,12 @@ console.log(2,userOnline);
       }}
     >
       <div>
-        {user.length ===0 ? (
+        {user.length === 0 ? (
           <div>
-            {userOnline?.map((el: IUser) => {
+            {userOnline?.map((el: IUser, index) => {
               return (
-                <div>
-                  {el.room === rooms?.id ? (
+                <div key={index}>
+                  {el.room === rooms?.roomId ? (
                     <div>
                       <h1 className="onlineText">{el.user}</h1>
                     </div>
@@ -90,10 +63,10 @@ console.log(2,userOnline);
           </div>
         ) : (
           <div>
-            {user.map((el: IUser) => {
+            {user.map((el: IUser, index) => {
               return (
-                <div>
-                  {el.room === rooms?.id ? (
+                <div key={index}>
+                  {el.room === rooms?.roomId ? (
                     <div>
                       <h1 className="onlineText">{el.user}</h1>
                     </div>

@@ -5,6 +5,7 @@ import "./messagInput.css";
 import { IRoom, ISocketAndRoom } from "../types/interfaces";
 
 const MesssagInpute: FC<ISocketAndRoom> = ({ socket }) => {
+  
   const [message, setMessage] = useState<string>("");
   const [socketRoom, setSocketRoom] = useState<IRoom>();
 
@@ -14,8 +15,8 @@ const MesssagInpute: FC<ISocketAndRoom> = ({ socket }) => {
 
   const getRooms: Function = async (): Promise<void> => {
     const res = await axios.get("http://localhost:4000/api/room");
-    let a = res.data.arrRoom;
-    setSocketRoom(res.data.arrRoom[a.length - 1]);
+    let roomData = res.data;
+    setSocketRoom(res.data[roomData.length - 1]);
   };
 
   const handleSend: MouseEventHandler<HTMLButtonElement> = (
@@ -25,7 +26,6 @@ const MesssagInpute: FC<ISocketAndRoom> = ({ socket }) => {
     const now = new Date();
     const hours = now.getHours();
     const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
     const formattedTime = `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`;
     if (message.trim() && localStorage.getItem("user")) {
       socket.emit("message", {
@@ -37,10 +37,10 @@ const MesssagInpute: FC<ISocketAndRoom> = ({ socket }) => {
         data: formattedTime ,
       });
     }
-
     setMessage("");
   };
-
+  
+  
   return (
     <div>
       <form className="forms">

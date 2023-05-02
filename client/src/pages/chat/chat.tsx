@@ -1,18 +1,25 @@
-import React, { useState, useEffect, FC } from "react";
-import { useNavigate } from "react-router";
 import axios from "axios";
+import { useNavigate } from "react-router";
+import React, { useState, useEffect, FC } from "react";
 
+import "./chat.css";
+import Online from "../../components/online";
 import MessagBox from "../../components/messagBox";
 import MesssagInpute from "../../components/messagInput";
-import Online from "../../components/online";
-import "./chat.css";
-import { IArrMessages, IRoom, ISocketAndRoom } from "../../types/interfaces";
+import {
+  IArrMessages,
+  IRoom,
+  ISocketAndRoom,
+  IUser,
+} from "../../types/interfaces";
 
 const ChatPage: FC<ISocketAndRoom> = ({ socket, room }) => {
   const navigate: ReturnType<typeof useNavigate> = useNavigate();
 
-  const [message, setMessage] = useState<IArrMessages[]>([]);
+  const [user, setUser] = useState<IUser[]>([]);
   const [roomID, setRoomID] = useState<IRoom>();
+  const [userOnline, setUserOnline] = useState<IUser[]>([]);
+  const [message, setMessage] = useState<IArrMessages[]>([]);
 
   useEffect((): void => {
     socket.on("response", (data: IArrMessages[]): void => {
@@ -21,24 +28,73 @@ const ChatPage: FC<ISocketAndRoom> = ({ socket, room }) => {
   }, [socket, message]);
 
   useEffect(() => {
-    roomsget();
+    getRooms();
+    getUsers();
   }, []);
 
+  useEffect((): void => {
+    socket.on("newUserResponse", (data): void => {
+      setUser(data);
+    });
+  }, [socket]);
+
+  const getUsers = async (): Promise<void> => {
+    const res = await axios.get("http://localhost:4000/api/user");
+    setUserOnline(res.data);
+  };
+
+  const deletUserOnline = ():void => {
+    userOnline.map((el: IUser) => {
+      if (
+        el.user === localStorage.getItem("user") &&
+        el.room === localStorage.getItem("room")
+      ) {
+        socket.emit("deletElementForUser", el);
+      }
+    });
+  };
+  
+  const deletUser = ():void => {
+    user.map((el: IUser) => {
+      if (
+        el.user === localStorage.getItem("user") &&
+        el.room === localStorage.getItem("room")
+      ) {
+        socket.emit("deletElementForUser", el);
+      }
+    });
+  };
+
   const handleleave: React.MouseEventHandler<HTMLButtonElement> = (): void => {
-    localStorage.removeItem("room");
-    localStorage.removeItem("user");
-    navigate("/");
+    if (!user || user.length === 0) {
+      deletUserOnline();
+      localStorage.removeItem("room");
+      localStorage.removeItem("user");
+      navigate("/");
+    } else {
+      deletUser();
+      localStorage.removeItem("room");
+      localStorage.removeItem("user");
+      navigate("/");
+    }
   };
 
   const rooms: React.MouseEventHandler<HTMLButtonElement> = (): void => {
-    localStorage.removeItem("room");
-    navigate("/");
+    if (!user || user.length === 0) {
+      deletUserOnline();
+      localStorage.removeItem("room");
+      navigate("/");
+    } else {
+      deletUser();
+      localStorage.removeItem("room");
+      navigate("/");
+    }
   };
 
-  const roomsget: Function = async (): Promise<void> => {
+  const getRooms: Function = async (): Promise<void> => {
     const res = await axios.get("http://localhost:4000/api/room");
-    let a = res.data.arrRoom;
-    setRoomID(res.data.arrRoom[a.length - 1]);
+    let room = res.data;
+    setRoomID(res.data[room.length - 1]);
   };
 
   return (
@@ -59,7 +115,7 @@ const ChatPage: FC<ISocketAndRoom> = ({ socket, room }) => {
               color: room?.background || roomID?.background,
             }}
           >
-            room{room?.id || roomID?.id}
+            room{room?.roomId || roomID?.roomId}
           </h1>
         </div>
         <main className="chats">

@@ -1,28 +1,28 @@
-import React, { FC, useEffect, useState } from "react";
 import axios from "axios";
+import React, { FC, useEffect, useState } from "react";
 
 import "./messagBox.css";
 import { IMessage, IBackground, IArrMessages } from "../types/interfaces";
 
 const MessagBox: FC<IMessage> = ({ message }) => {
+  
+  const [background, setBackground] = useState<IBackground>();
   const [userMessages, setUserMessages] = useState<IArrMessages[]>([]);
 
-  const [background, setBackground] = useState<IBackground>();
-
   useEffect((): void => {
-    getMessage();
     getRooms();
+    getMessage();
   }, []);
 
   const getRooms: Function = async (): Promise<void> => {
     const getRooms = await axios.get("http://localhost:4000/api/room");
-    let roomData = getRooms.data.arrRoom;
-    setBackground(getRooms.data.arrRoom[roomData.length - 1]);
+    const roomData:IBackground[] = getRooms.data;
+    setBackground(getRooms.data[roomData.length - 1]);
   };
 
   const getMessage: Function = async (): Promise<void> => {
     const getMessage = await axios.get("http://localhost:4000/api");
-    setUserMessages(getMessage.data.arr);
+    setUserMessages(getMessage.data);
   };
 
   return (
@@ -33,11 +33,11 @@ const MessagBox: FC<IMessage> = ({ message }) => {
       >
         {message.length === 0 ? (
           <div>
-            {userMessages.map((element: IArrMessages) => {
+            {userMessages.map((element: IArrMessages, index) => {
               return (
-                <div>
+                <div key={index}>
                   <div>
-                    {element.roomI?.id === localStorage.getItem("room") ? (
+                    {element.roomI?.roomId === localStorage.getItem("room") ? (
                       <div>
                         {element.name === localStorage.getItem("user") ? (
                           <div>
@@ -71,11 +71,11 @@ const MessagBox: FC<IMessage> = ({ message }) => {
           </div>
         ) : (
           <div>
-            {message?.map((element: IArrMessages) => {
+            {message?.map((element: IArrMessages, index) => {
               return (
-                <div>
+                <div key={index}>
                   <div>
-                    {element.roomI?.id === localStorage.getItem("room") ? (
+                    {element.roomI?.roomId === localStorage.getItem("room") ? (
                       <div>
                         {element.name === localStorage.getItem("user") ? (
                           <div>

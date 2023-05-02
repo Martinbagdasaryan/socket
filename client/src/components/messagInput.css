@@ -1,18 +1,15 @@
 .forms{
-
     padding: 100px;
     background: rgb(119 144 225);
     text-align: center;
 }
 
 .input{
-
     border-radius: 10px;
     width: 1000px;
     height: 37px;
 }
 .button{
-
     height: 40px;
     border-radius: 10px;
     width: 60px;
