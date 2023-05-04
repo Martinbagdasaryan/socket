@@ -1,23 +1,12 @@
 import axios from "axios";
-import React, { FC, MouseEventHandler, useEffect, useState } from "react";
+import React, { FC, MouseEventHandler, useState } from "react";
 
 import "./messagInput.css";
-import { IRoom, ISocketAndRoom } from "../types/interfaces";
+import {  ISocketAndRoom } from "../types/interfaces";
 
-const MesssagInpute: FC<ISocketAndRoom> = ({ socket }) => {
+const MesssagInpute: FC<ISocketAndRoom> = ({ socket, roomID }) => {
   
   const [message, setMessage] = useState<string>("");
-  const [socketRoom, setSocketRoom] = useState<IRoom>();
-
-  useEffect((): void => {
-    getRooms();
-  }, []);
-
-  const getRooms: Function = async (): Promise<void> => {
-    const res = await axios.get("http://localhost:4000/api/room");
-    let roomData = res.data;
-    setSocketRoom(res.data[roomData.length - 1]);
-  };
 
   const handleSend: MouseEventHandler<HTMLButtonElement> = (
     e: React.SyntheticEvent
@@ -31,7 +20,7 @@ const MesssagInpute: FC<ISocketAndRoom> = ({ socket }) => {
       socket.emit("message", {
         id: `${socket.id}`,
         socketID: socket.id,
-        roomI: socketRoom,
+        roomI: roomID,
         text: message,
         name: localStorage.getItem("user"),
         data: formattedTime ,
@@ -53,7 +42,7 @@ const MesssagInpute: FC<ISocketAndRoom> = ({ socket }) => {
         <button
           className="button"
           style={{
-            background: socketRoom?.background,
+            background: roomID?.background,
           }}
           onClick={handleSend}
         >

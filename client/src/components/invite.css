@@ -1,0 +1,16 @@
+.buttons-invite {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+
+.button-fird {
+    border-radius: 5px;
+    background: #ea3838;
+    padding: 3px;
+}
+
+.button-enter {
+    border-radius: 5px;
+    background: #94ff92;;
+}

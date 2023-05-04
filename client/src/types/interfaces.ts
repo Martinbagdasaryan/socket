@@ -2,14 +2,18 @@ import { Socket } from "socket.io-client";
 
 export interface IMessage {
   message: IArrMessages[];
+  roomID: IRoom | undefined;
 }
-export interface IBackground {
-  id: string;
-  background: string | undefined;
-}
-export interface ISocketAndRoom {
+// export interface IBackground {
+//   id: string;
+//   background: string | undefined;
+// }
+export interface ISocketAndRoomAndUser {
   socket: Socket;
-  room: IRoom;
+  room: IRoom | undefined;
+  userOnline: IUser[];
+  roomID: IRoom | undefined;
+  user: IUserMessage[];
 }
 export interface IUser {
   id: number;
@@ -39,4 +43,42 @@ export interface IArrMessages {
   text: string;
   name: string;
   data: string;
+}
+
+export interface ISocketAndRoom {
+  socket: Socket;
+  room: IRoom | undefined;
+  roomID: IRoom | undefined;
+}
+
+export interface IChat {
+  socket: Socket;
+  room: IRoom | undefined;
+}
+
+export interface IInvateUser {
+  id: number;
+  user: string;
+  socketId: string;
+  room: string;
+  IUser: string;
+  IRoom: string;
+}
+
+export interface ISocketAndUser {
+  socket: Socket;
+  userOnline: IUser[];
+  user: IUserMessage[];
+}
+
+export interface IInvite {
+  socket: Socket;
+  getInvate: IInvateUser[];
+  deletUserOnline: Function;
+}
+
+export interface IModal {
+  socket: Socket;
+  userElement: IUser;
+  index: number;
 }

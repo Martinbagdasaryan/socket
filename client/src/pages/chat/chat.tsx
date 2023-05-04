@@ -1,23 +1,28 @@
 import axios from "axios";
+import Modal from "react-modal";
 import { useNavigate } from "react-router";
 import React, { useState, useEffect, FC } from "react";
 
 import "./chat.css";
 import Online from "../../components/online";
+import Invite from "../../components/invite";
+import UserModаl from "../../components/usersModal";
 import MessagBox from "../../components/messagBox";
 import MesssagInpute from "../../components/messagInput";
 import {
   IArrMessages,
+  IChat,
+  IInvateUser,
   IRoom,
-  ISocketAndRoom,
   IUser,
 } from "../../types/interfaces";
 
-const ChatPage: FC<ISocketAndRoom> = ({ socket, room }) => {
+const ChatPage: FC<IChat> = ({ socket, room }) => {
   const navigate: ReturnType<typeof useNavigate> = useNavigate();
 
   const [user, setUser] = useState<IUser[]>([]);
   const [roomID, setRoomID] = useState<IRoom>();
+  const [socketInvite, setSocketInvite] = useState<IInvateUser[]>([]);
   const [userOnline, setUserOnline] = useState<IUser[]>([]);
   const [message, setMessage] = useState<IArrMessages[]>([]);
 
@@ -36,6 +41,9 @@ const ChatPage: FC<ISocketAndRoom> = ({ socket, room }) => {
     socket.on("newUserResponse", (data): void => {
       setUser(data);
     });
+    socket.on("getInvite", (data) => {
+      setSocketInvite((prev) => [...prev, data]);
+    });
   }, [socket]);
 
   const getUsers = async (): Promise<void> => {
@@ -43,7 +51,7 @@ const ChatPage: FC<ISocketAndRoom> = ({ socket, room }) => {
     setUserOnline(res.data);
   };
 
-  const deletUserOnline = ():void => {
+  const deletUserOnline = (): void => {
     userOnline.map((el: IUser) => {
       if (
         el.user === localStorage.getItem("user") &&
@@ -53,8 +61,8 @@ const ChatPage: FC<ISocketAndRoom> = ({ socket, room }) => {
       }
     });
   };
-  
-  const deletUser = ():void => {
+
+  const deletUser = (): void => {
     user.map((el: IUser) => {
       if (
         el.user === localStorage.getItem("user") &&
@@ -66,7 +74,7 @@ const ChatPage: FC<ISocketAndRoom> = ({ socket, room }) => {
   };
 
   const handleleave: React.MouseEventHandler<HTMLButtonElement> = (): void => {
-    if (!user || user.length === 0) {
+    if (user.length === 0) {
       deletUserOnline();
       localStorage.removeItem("room");
       localStorage.removeItem("user");
@@ -80,7 +88,7 @@ const ChatPage: FC<ISocketAndRoom> = ({ socket, room }) => {
   };
 
   const rooms: React.MouseEventHandler<HTMLButtonElement> = (): void => {
-    if (!user || user.length === 0) {
+    if (user.length === 0) {
       deletUserOnline();
       localStorage.removeItem("room");
       navigate("/");
@@ -93,11 +101,14 @@ const ChatPage: FC<ISocketAndRoom> = ({ socket, room }) => {
 
   const getRooms: Function = async (): Promise<void> => {
     const res = await axios.get("http://localhost:4000/api/room");
-    let room = res.data;
-    setRoomID(res.data[room.length - 1]);
+    res.data.map((el: IRoom) => {
+      if (el.roomId === localStorage.getItem("room")) {
+        setRoomID(el);
+      }
+    });
   };
 
-  return (
+  return localStorage.getItem("room") ? (
     <div style={{ background: "#e9e9e9" }}>
       <header className="header">
         <button className="button" onClick={rooms}>
@@ -117,14 +128,48 @@ const ChatPage: FC<ISocketAndRoom> = ({ socket, room }) => {
           >
             room{room?.roomId || roomID?.roomId}
           </h1>
+          <div>
+            <UserModаl socket={socket} userOnline={userOnline} user={user} />
+          </div>
+        </div>
+        <div>
+          {socketInvite ? (
+            socketInvite.map((el) => {
+              return (
+                <div>
+                  {el.user === localStorage.getItem("user") ? (
+                    <div>
+                      <Invite
+                        socket={socket}
+                        getInvate={socketInvite}
+                        deletUserOnline={deletUserOnline}
+                      />
+                    </div>
+                  ) : (
+                    <div></div>
+                  )}
+                </div>
+              );
+            })
+          ) : (
+            <div></div>
+          )}
         </div>
         <main className="chats">
-          <Online socket={socket} room={room} />
-          <MessagBox message={message} />
+          <Online
+            socket={socket}
+            room={room}
+            userOnline={userOnline}
+            roomID={roomID}
+            user={user}
+          />
+          <MessagBox message={message} roomID={roomID} />
         </main>
-        <MesssagInpute socket={socket} room={room} />
+        <MesssagInpute socket={socket} room={room} roomID={roomID} />
       </div>
     </div>
+  ) : (
+    <>{navigate("/")}</>
   );
 };
 

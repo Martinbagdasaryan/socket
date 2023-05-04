@@ -4,12 +4,13 @@
     text-align: center;
 }
 
-.input{
+.input {
     border-radius: 10px;
     width: 1000px;
     height: 37px;
 }
-.button{
+
+.button {
     height: 40px;
     border-radius: 10px;
     width: 60px;

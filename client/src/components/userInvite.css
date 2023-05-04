@@ -1,0 +1,40 @@
+.user-name-and-button {
+  display: flex;
+  justify-content: center;
+  margin-block-end: 10px;
+}
+
+.name-button {
+  border: 4px solid #92ffba;
+  width: 350px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  gap: 60px;
+}
+
+.text-name {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.name-buttons {
+  border: 4px solid #92ffba;
+  width: 350px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  gap: 5px;
+}
+
+.button-ivite {
+  border: 1px solid #18123b;
+  background: #a9eaac;
+  border-radius: 4px;
+  padding: 5px;
+  color: #000000;
+}

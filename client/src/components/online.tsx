@@ -3,45 +3,17 @@ import React, { FC, useEffect, useState } from "react";
 
 import "./online.css";
 import {
-  IRoom,
-  ISocketAndRoom,
+  ISocketAndRoomAndUser,
   IUser,
-  IUserMessage,
 } from "../types/interfaces";
 
-const Online: FC<ISocketAndRoom> = ({ socket, room }) => {
+const Online: FC<ISocketAndRoomAndUser> = ({ user, room ,userOnline ,roomID}) => {
   
-  const [rooms, setRooms] = useState<IRoom>();
-  const [user, setUser] = useState<IUserMessage[]>([]);
-  const [userOnline, setUserOnline] = useState<IUser[]>([]);
-
-  useEffect((): void => {
-    getUsers();
-    getRooms();
-  }, []);
-
-  useEffect((): void => {
-    socket.on("newUserResponse", (data): void => {
-      setUser(data);
-    });
-  }, [socket]);
-
-  const getUsers = async (): Promise<void> => {
-    const res = await axios.get("http://localhost:4000/api/user");
-    setUserOnline(res.data);
-  };
-
-  const getRooms = async (): Promise<void> => {
-    const res = await axios.get("http://localhost:4000/api/room");
-    let a = res.data;
-    setRooms(res.data[a.length - 1]);
-  };
-
   return (
     <div
-      className="formOnline"
+      className="form-online"
       style={{
-        background: room?.background || rooms?.background,
+        background: room?.background || roomID?.background,
       }}
     >
       <div>
@@ -50,9 +22,9 @@ const Online: FC<ISocketAndRoom> = ({ socket, room }) => {
             {userOnline?.map((el: IUser, index) => {
               return (
                 <div key={index}>
-                  {el.room === rooms?.roomId ? (
+                  {el.room === roomID?.roomId ? (
                     <div>
-                      <h1 className="onlineText">{el.user}</h1>
+                      <h1 className="online-text">{el.user}</h1>
                     </div>
                   ) : (
                     <div></div>
@@ -66,9 +38,9 @@ const Online: FC<ISocketAndRoom> = ({ socket, room }) => {
             {user.map((el: IUser, index) => {
               return (
                 <div key={index}>
-                  {el.room === rooms?.roomId ? (
+                  {el.room === roomID?.roomId ? (
                     <div>
-                      <h1 className="onlineText">{el.user}</h1>
+                      <h1 className="online-text">{el.user}</h1>
                     </div>
                   ) : (
                     <div></div>

@@ -2,34 +2,27 @@ import axios from "axios";
 import React, { FC, useEffect, useState } from "react";
 
 import "./messagBox.css";
-import { IMessage, IBackground, IArrMessages } from "../types/interfaces";
+import { IMessage, IArrMessages } from "../types/interfaces";
 
-const MessagBox: FC<IMessage> = ({ message }) => {
+const MessagBox: FC<IMessage> = ({ message ,roomID}) => {
   
-  const [background, setBackground] = useState<IBackground>();
   const [userMessages, setUserMessages] = useState<IArrMessages[]>([]);
 
   useEffect((): void => {
-    getRooms();
     getMessage();
   }, []);
 
-  const getRooms: Function = async (): Promise<void> => {
-    const getRooms = await axios.get("http://localhost:4000/api/room");
-    const roomData:IBackground[] = getRooms.data;
-    setBackground(getRooms.data[roomData.length - 1]);
-  };
 
   const getMessage: Function = async (): Promise<void> => {
-    const getMessage = await axios.get("http://localhost:4000/api");
-    setUserMessages(getMessage.data);
+    const responsMessage = await axios.get("http://localhost:4000/api");
+    setUserMessages(responsMessage.data);
   };
-
+  
   return (
     <div>
       <div
-        className="messageBox"
-        style={{ background: background?.background }}
+        className="message-box"
+        style={{ background: roomID?.background }}
       >
         {message.length === 0 ? (
           <div>
@@ -41,21 +34,21 @@ const MessagBox: FC<IMessage> = ({ message }) => {
                       <div>
                         {element.name === localStorage.getItem("user") ? (
                           <div>
-                            <div className="messageRigth" key={element.id}>
-                              <p className="messageText">{element.text}</p>
+                            <div className="message-rigth" key={element.id}>
+                              <p className="message-text">{element.text}</p>
 
-                              <p className="messageRigth">{element.name}</p>
+                              <p className="message-rigth">{element.name}</p>
                             </div>
 
-                            <div className="messageRigth">
+                            <div className="message-rigth">
                               <p>{element.data}</p>
                             </div>
                           </div>
                         ) : (
                           <div>
-                            <div className="messageLeft" key={element.id}>
+                            <div className="message-left" key={element.id}>
                               <p>{element.name}</p>
-                              <p className="messageTextLeft">{element.text}</p>
+                              <p className="message-text-left">{element.text}</p>
                             </div>
                             <p>{element.data}</p>
                           </div>
@@ -79,22 +72,22 @@ const MessagBox: FC<IMessage> = ({ message }) => {
                       <div>
                         {element.name === localStorage.getItem("user") ? (
                           <div>
-                            <div className="messageRigth" key={element.id}>
-                              <p className="messageText">{element.text}</p>
+                            <div className="message-rigth" key={element.id}>
+                              <p className="message-text">{element.text}</p>
                               <p>{element.name}</p>
                             </div>
 
-                            <div className="messageRigth">
+                            <div className="message-rigth">
                               <p>{element.data}</p>
                             </div>
                           </div>
                         ) : (
                           <div>
-                            <div className="messageLeft" key={element.id}>
+                            <div className="message-left" key={element.id}>
                               <p>{element.name}</p>
-                              <p className="messageTextLeft">{element.text}</p>
+                              <p className="message-text-left">{element.text}</p>
                             </div>
-                            <p className="messageLeft">{element.data}</p>
+                            <p className="message-left">{element.data}</p>
                           </div>
                         )}
                       </div>

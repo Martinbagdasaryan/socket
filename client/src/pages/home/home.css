@@ -11,19 +11,19 @@
   height: 200px;
 }
 
-.userName {
+.user-names {
   margin: 0px;
   display: flex;
   justify-content: center;
 }
 
-.inputName {
+.input-name {
   height: 30px;
   border-radius: 10px;
   width: 1000px;
 }
 
-.usreName {
+.usre-name {
   display: flex;
   justify-content: right;
   height: 50px;
@@ -31,27 +31,27 @@
   border-radius: 10px;
   gap: 40px;
 }
-.buttonExit {
+
+.button-exit {
   width: 100px;
   background: #5a5aff;
   border-radius: 8px;
 }
 
-.roomsel {
+.rooms {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  height: 500px;
   gap: 10px;
 }
 
-.buttonRooms {
+.button-rooms {
   border-radius: 10px;
   width: 300px;
   height: 300px;
 }
 
-.homeInput {
+.home-input {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -59,8 +59,7 @@
   max-width: 400px;
 }
 
-.errorMessage{
-
+.error-message{
   margin: 0px;
   display: flex;
   justify-content: center;

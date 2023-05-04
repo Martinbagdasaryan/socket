@@ -4,9 +4,10 @@ import dotenv from "dotenv";
 import express from "express";
 import { Server } from "socket.io";
 
-import { IArrMessages, IArrRoom, IUser } from "./interface";
+import {  IMessagesList, IRoomList, IUserList } from "./interface";
 
 dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT;
 const server = http.createServer(app);
@@ -19,32 +20,41 @@ const IO = new Server(server, {
 
 app.use(cors({ origin: "http://localhost:5173" }));
 
-const arrMessages: IArrMessages[] = [];
-const arrRoom: IArrRoom[] = [];
-const users: IUser[] = [];
+const messagesList: IMessagesList[] = [];
+const roomList: IRoomList[] = [];
+const UsersList: IUserList[] = [];
 
 IO.on("connection", (socket) => {
   console.log(`${socket.id} user connected`);
 
   socket.on("message", (data) => {
-    arrMessages.push(data);
-    IO.emit("response", arrMessages);
+    messagesList.push(data);
+    IO.emit("response", messagesList);
   });
 
   socket.on("room", (room) => {
-    arrRoom.push(room);
-    IO.emit("myRooms", arrRoom);
+    roomList.push(room);
+
+    IO.emit("myRooms", roomList);
   });
 
   socket.on("deletElementForUser", (data) => {
-    let index = users.indexOf(data);
-    users.splice(index, 1);
-    IO.emit("newUserResponse", users);
+    const usersIndex = UsersList.findIndex((user) => user.id === data.id);
+    UsersList.splice(usersIndex, 1);
+
+    const roomIndex = roomList.findIndex((room) => room.id === data.id);
+    roomList.splice(roomIndex, 1);
+
+    IO.emit("newUserResponse", UsersList);
   });
 
   socket.on("newUser", (data) => {
-    users.push(data);
-    IO.emit("newUserResponse", users);
+    UsersList.push(data);
+
+    IO.emit("newUserResponse", UsersList);
+  });
+  socket.on("inviteUser", (data) => {
+    IO.emit("getInvite", data);
   });
 
   socket.on("disconnect", () => {
@@ -53,15 +63,15 @@ IO.on("connection", (socket) => {
 });
 
 app.get("/api", (req, res) => {
-  res.json(arrMessages);
+  res.json(messagesList);
 });
 
 app.get("/api/room", (req, res) => {
-  res.json(arrRoom);
+  res.json(roomList);
 });
 
 app.get("/api/user", (req, res) => {
-  res.json(users);
+  res.json(UsersList);
 });
 
 server.listen(PORT, () => {

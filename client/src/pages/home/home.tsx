@@ -9,13 +9,13 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
   const navigate: ReturnType<typeof useNavigate> = useNavigate();
 
   const [user, setUser] = useState<string>("");
-  const [flag, setFlag] = useState<boolean>(false);
+  const [incorrectlyTypedName, setIncorrectlyTypedName] = useState<boolean>(false);
   const [users, setUsers] = useState<IUser[]>([]);
-  const [redFlag, setRedFlag] = useState<boolean>(false);
+  const [rName, setRName] = useState<boolean>(false);
 
   const random = Math.random();
 
-  const room_namber: { id: number; background: string; roomId: string }[] = [
+  const roomList: IRoom[] = [
     {
       id: random,
       roomId: "1",
@@ -39,52 +39,56 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
   ];
 
   useEffect(() => {
-    getUsers();
+    getUsersList();
   }, []);
 
   useEffect(() => {
-    soketUser();
+    socketUser();
   }, [socket]);
 
-  const getUsers = async (): Promise<void> => {
-    const res = await axios.get("http://localhost:4000/api/user");
-    setUsers(res.data);
+  const getUsersList = async (): Promise<void> => {
+    const responsUserList = await axios.get("http://localhost:4000/api/user");
+    setUsers(responsUserList.data);
   };
 
-  const soketUser = () => {
+  const socketUser = () => {
     socket.on("newUserResponse", (data) => {
       setUsers(data);
     });
   };
-
+  
   const room = async (el: IRoom): Promise<void> => {
     let isUserExist = false;
-    const userData:string|null = localStorage.getItem("user");
+    const userData: string | null = localStorage.getItem("user");
 
-    if (userData === null && user !== "") {
-      users?.map((elm: IUser) => {
-        if (elm.user === user) {
-          setRedFlag(true);
-
-          isUserExist = true;
+    if ( user!==''  ) {
+      if(userData === null ){
+        users?.map((elm: IUser) => {
+          if (elm.user === user) {
+            setRName(true);
+            isUserExist = true;
+          }
+        });
+        if (!isUserExist) {
+          
+          localStorage.setItem("user", user);
+          setIncorrectlyTypedName(false);
+          setRName(false);
+  
+          roomCheck(el, user);
         }
-      });
-
-      if (!isUserExist) {
-        localStorage.setItem("user", user);
-        setFlag(false);
-        setRedFlag(false);
-
-        roomCheck(el, user);
       }
-    } else {
-      setFlag(true);
-      roomCheck(el, userData);
-    }
+      
+    } else  {
+      if(userData!==null){
+        roomCheck(el, userData);
+      }
+      else{
+        setIncorrectlyTypedName(true);}
+      }
   };
-
-  const roomCheck = (el:IRoom, userData:string|null) => {
-
+  
+  const roomCheck = (el: IRoom, userData: string | null) => {
     setRoom(el);
     socket.emit("room", el);
 
@@ -104,9 +108,8 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
         socketId: socket.id,
         room: el.roomId,
       });
+      navigate("/chat");
     }
-
-    navigate("/chat");
   };
 
   const exit = (e: React.SyntheticEvent) => {
@@ -123,27 +126,27 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
             {localStorage.getItem("user") === null ? (
               <div>
                 {" "}
-                <h3 className="userName">Name</h3>
+                <h3 className="user-names">Name</h3>
                 <input
                   type="text"
-                  className="inputName"
+                  className="input-name"
                   placeholder="   writing the name is requird"
                   onChange={(e) => setUser(e.target.value)}
                 />
-                {flag ? (
+                {incorrectlyTypedName ? (
                   <div>
                     {" "}
-                    <h3 className="errorMessage">
+                    <h3 className="error-message">
                       writing the name is requird
                     </h3>
                   </div>
                 ) : (
                   <div></div>
                 )}
-                {redFlag ? (
+                {rName ? (
                   <div>
                     {" "}
-                    <h3 className="errorMessage">
+                    <h3 className="error-message">
                       there is a person with this name ,choose your unique name
                     </h3>
                   </div>
@@ -152,9 +155,9 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
                 )}
               </div>
             ) : (
-              <div className="usreName">
-                <h1 className="homeInput">{localStorage.getItem("user")}</h1>
-                <button className="buttonExit" onClick={exit}>
+              <div className="usre-names">
+                <h1 className="home-input">{localStorage.getItem("user")}</h1>
+                <button className="button-exit" onClick={exit}>
                   Exit
                 </button>
               </div>
@@ -163,11 +166,11 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
           {}
         </div>
 
-        <div className="roomsel">
-          {room_namber.map((el, index) => (
+        <div className="rooms">
+          {roomList.map((el, index) => (
             <div key={index}>
               <button
-                className="buttonRooms"
+                className="button-rooms"
                 style={{
                   background: el.background,
                 }}

@@ -1,4 +1,4 @@
-.messageBox {
+.message-box {
   border-radius: 18px;
   height: 600px;
   border: 5px solid #808080;
@@ -7,14 +7,14 @@
   margin-top: 30px;
 }
 
-.messageRigth {
+.message-rigth {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 10px;
 }
 
-.messageText {
+.message-text {
   padding: 19px;
   font-size: 16px;
   border: 1px solid black;
@@ -28,14 +28,14 @@
   word-break: break-all
 }
 
-.messageLeft {
+.message-left {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   gap: 10px;
 }
 
-.messageTextLeft {
+.message-text-left {
   padding: 19px;
   font-size: 16px;
   border: 1px solid black;

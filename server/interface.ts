@@ -1,16 +1,17 @@
-export interface IArrMessages {
+export interface IMessagesList {
   id: number;
   socketID: string;
   roomI: object;
   text: string;
   name: string;
 }
-export interface IArrRoom {
+export interface IRoomList {
   id: number;
   roomId: string;
   background: string;
 }
-export interface IUser {
+export interface IUserList {
+  id: number;
   user: string;
   socketId: string;
   room: string;
