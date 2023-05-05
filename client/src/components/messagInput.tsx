@@ -2,10 +2,9 @@ import axios from "axios";
 import React, { FC, MouseEventHandler, useState } from "react";
 
 import "./messagInput.css";
-import {  ISocketAndRoom } from "../types/interfaces";
+import { ISocketAndRoom } from "../types/interfaces";
 
 const MesssagInpute: FC<ISocketAndRoom> = ({ socket, roomID }) => {
-  
   const [message, setMessage] = useState<string>("");
 
   const handleSend: MouseEventHandler<HTMLButtonElement> = (
@@ -15,7 +14,9 @@ const MesssagInpute: FC<ISocketAndRoom> = ({ socket, roomID }) => {
     const now = new Date();
     const hours = now.getHours();
     const minutes = now.getMinutes();
-    const formattedTime = `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+    const formattedTime = `${hours < 10 ? "0" + hours : hours}:${
+      minutes < 10 ? "0" + minutes : minutes
+    }`;
     if (message.trim() && localStorage.getItem("user")) {
       socket.emit("message", {
         id: `${socket.id}`,
@@ -23,13 +24,12 @@ const MesssagInpute: FC<ISocketAndRoom> = ({ socket, roomID }) => {
         roomI: roomID,
         text: message,
         name: localStorage.getItem("user"),
-        data: formattedTime ,
+        data: formattedTime,
       });
     }
     setMessage("");
   };
-  
-  
+
   return (
     <div>
       <form className="forms">

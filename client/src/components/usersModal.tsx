@@ -1,7 +1,7 @@
 import Modal from "react-modal";
 import React, { FC, useState } from "react";
 
-import "./userModal.css";
+import "./usersModal.css";
 import UserInvait from "./userInvite";
 import { ISocketAndUser, IUser } from "../types/interfaces";
 
@@ -13,11 +13,10 @@ const UserModal: FC<ISocketAndUser> = ({ userOnline, socket, user }) => {
       top: "50%",
       left: "50%",
       right: "auto",
-      // marginRight: "-50%",
       background: "rgb(119 144 225)",
       transform: "translate(-50%, -50%)",
       minWidth: "400px",
-      maxHeight: '250px'
+      maxHeight: "250px",
     },
   };
 
@@ -70,7 +69,7 @@ const UserModal: FC<ISocketAndUser> = ({ userOnline, socket, user }) => {
           >
             {user.map((userElement: IUser, index: number) => {
               return (
-                <div>
+                <div key={index}>
                   <UserInvait
                     userElement={userElement}
                     index={index}

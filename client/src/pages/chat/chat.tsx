@@ -1,5 +1,4 @@
 import axios from "axios";
-import Modal from "react-modal";
 import { useNavigate } from "react-router";
 import React, { useState, useEffect, FC } from "react";
 
@@ -22,9 +21,9 @@ const ChatPage: FC<IChat> = ({ socket, room }) => {
 
   const [user, setUser] = useState<IUser[]>([]);
   const [roomID, setRoomID] = useState<IRoom>();
-  const [socketInvite, setSocketInvite] = useState<IInvateUser[]>([]);
   const [userOnline, setUserOnline] = useState<IUser[]>([]);
   const [message, setMessage] = useState<IArrMessages[]>([]);
+  const [socketInvite, setSocketInvite] = useState<IInvateUser[]>([]);
 
   useEffect((): void => {
     socket.on("response", (data: IArrMessages[]): void => {
@@ -41,6 +40,7 @@ const ChatPage: FC<IChat> = ({ socket, room }) => {
     socket.on("newUserResponse", (data): void => {
       setUser(data);
     });
+
     socket.on("getInvite", (data) => {
       setSocketInvite((prev) => [...prev, data]);
     });
@@ -134,15 +134,17 @@ const ChatPage: FC<IChat> = ({ socket, room }) => {
         </div>
         <div>
           {socketInvite ? (
-            socketInvite.map((el) => {
+            socketInvite.map((el, index) => {
               return (
-                <div>
+                <div key={index}>
                   {el.user === localStorage.getItem("user") ? (
                     <div>
                       <Invite
                         socket={socket}
                         getInvate={socketInvite}
                         deletUserOnline={deletUserOnline}
+                        setSocketInvite={setSocketInvite}
+                        socketInvite={socketInvite}
                       />
                     </div>
                   ) : (

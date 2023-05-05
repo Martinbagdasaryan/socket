@@ -2,13 +2,14 @@ import axios from "axios";
 import React, { FC, useEffect, useState } from "react";
 
 import "./online.css";
-import {
-  ISocketAndRoomAndUser,
-  IUser,
-} from "../types/interfaces";
+import { ISocketAndRoomAndUser, IUser } from "../types/interfaces";
 
-const Online: FC<ISocketAndRoomAndUser> = ({ user, room ,userOnline ,roomID}) => {
-  
+const Online: FC<ISocketAndRoomAndUser> = ({
+  user,
+  room,
+  userOnline,
+  roomID,
+}) => {
   return (
     <div
       className="form-online"

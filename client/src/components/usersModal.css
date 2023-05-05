@@ -1,0 +1,20 @@
+.button-close-div {
+  display: flex;
+  justify-content: center;
+}
+
+.button-user {
+  font-size: 20px;
+  background: deepskyblue;
+  border-radius: 8px;
+  padding: 2px;
+}
+
+.button-close {
+  font-size: 20px;
+  background: #ef5c5c;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+

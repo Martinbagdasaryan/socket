@@ -9,7 +9,8 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
   const navigate: ReturnType<typeof useNavigate> = useNavigate();
 
   const [user, setUser] = useState<string>("");
-  const [incorrectlyTypedName, setIncorrectlyTypedName] = useState<boolean>(false);
+  const [incorrectlyTypedName, setIncorrectlyTypedName] =
+    useState<boolean>(false);
   const [users, setUsers] = useState<IUser[]>([]);
   const [rName, setRName] = useState<boolean>(false);
 
@@ -56,13 +57,13 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
       setUsers(data);
     });
   };
-  
+
   const room = async (el: IRoom): Promise<void> => {
     let isUserExist = false;
     const userData: string | null = localStorage.getItem("user");
 
-    if ( user!==''  ) {
-      if(userData === null ){
+    if (user !== "") {
+      if (userData === null) {
         users?.map((elm: IUser) => {
           if (elm.user === user) {
             setRName(true);
@@ -70,24 +71,22 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
           }
         });
         if (!isUserExist) {
-          
           localStorage.setItem("user", user);
           setIncorrectlyTypedName(false);
           setRName(false);
-  
+
           roomCheck(el, user);
         }
       }
-      
-    } else  {
-      if(userData!==null){
+    } else {
+      if (userData !== null) {
         roomCheck(el, userData);
+      } else {
+        setIncorrectlyTypedName(true);
       }
-      else{
-        setIncorrectlyTypedName(true);}
-      }
+    }
   };
-  
+
   const roomCheck = (el: IRoom, userData: string | null) => {
     setRoom(el);
     socket.emit("room", el);

@@ -5,7 +5,13 @@ import React, { FC, useEffect, useState } from "react";
 import "./invite.css";
 import { IInvite, IRoom } from "../types/interfaces";
 
-const Invite: FC<IInvite> = ({ socket, getInvate, deletUserOnline }) => {
+const Invite: FC<IInvite> = ({
+  socket,
+  getInvate,
+  deletUserOnline,
+  setSocketInvite,
+  socketInvite,
+}) => {
   const navigate: ReturnType<typeof useNavigate> = useNavigate();
 
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
@@ -44,7 +50,7 @@ const Invite: FC<IInvite> = ({ socket, getInvate, deletUserOnline }) => {
       marginRight: "-50%",
       background: "rgb(119 144 225)",
       transform: "translate(-50%, -50%)",
-      minWidth: '400px'
+      minWidth: "400px",
     },
   };
 
@@ -52,14 +58,26 @@ const Invite: FC<IInvite> = ({ socket, getInvate, deletUserOnline }) => {
     setModalIsOpen(true);
   }, [getInvate]);
 
-  const closeModal = () => {
-    setModalIsOpen(false);
-    window.location.reload();
+  const closeModal = (e: React.SyntheticEvent): void => {
+    e.preventDefault();
+    const filterInvite = socketInvite.filter((el) => {
+      return (
+        el.user !== localStorage.getItem("user") &&
+        el.room !== localStorage.getItem("room")
+      );
+    });
+
+    socket.emit("inviteBoolean", false);
+
+    setSocketInvite(filterInvite);
   };
 
   const enterRoom = async (): Promise<void> => {
     getInvate.map((element) => {
-      if (element.user === localStorage.getItem("user")) {
+      if (
+        element.user === localStorage.getItem("user") &&
+        element.room === localStorage.getItem("room")
+      ) {
         deletUserOnline();
         roomList.map((el) => {
           if (el.roomId === element.IRoom) {
@@ -89,9 +107,9 @@ const Invite: FC<IInvite> = ({ socket, getInvate, deletUserOnline }) => {
     <div>
       <Modal isOpen={modalIsOpen} style={customStyles}>
         <div>
-          {getInvate.map((el) => {
+          {getInvate.map((el, index) => {
             return (
-              <div>
+              <div key={index}>
                 {el.user === localStorage.getItem("user") ? (
                   <div>
                     <h1>
