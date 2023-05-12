@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import React, { FC, useEffect, useState } from "react";
 
 import "./invite.css";
+import { store } from "../redux/reduxStor";
 import { IInvite, IRoom } from "../types/interfaces";
-import { store } from "../redux/RedaxStor";
 
 const Invite: FC<IInvite> = ({
   socket,

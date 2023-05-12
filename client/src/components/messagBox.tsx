@@ -1,8 +1,8 @@
 import axios from "axios";
 import React, { FC, useEffect, useState, useRef, RefObject } from "react";
-import { store } from "../redux/RedaxStor";
 
 import "./messagBox.css";
+import { store } from "../redux/reduxStor";
 import { IMessage, IArrMessages } from "../types/interfaces";
 
 const MessagBox: FC<IMessage> = ({ message, roomID }) => {

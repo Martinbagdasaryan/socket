@@ -1,8 +1,9 @@
 import { persistReducer } from "redux-persist";
-import { CombinedState, combineReducers, Reducer } from "redux";
 import storage from "redux-persist/lib/storage";
-import roomReducer from "./storeUserRoom";
-import nameReducer from "./storeUserName";
+import { CombinedState, combineReducers, Reducer } from "redux";
+
+import roomReducer from "./roomReducer";
+import nameReducer from "./nameReducer";
 import { IAction, IReducer } from "../types/interfaces";
 
 const persistConfig = {
@@ -10,7 +11,10 @@ const persistConfig = {
   storage,
 };
 
-const rootReducer :Reducer<CombinedState<IReducer>, IAction<string>> = combineReducers({
+const rootReducer: Reducer<
+  CombinedState<IReducer>,
+  IAction<string>
+> = combineReducers({
   room: roomReducer,
   name: nameReducer,
 });

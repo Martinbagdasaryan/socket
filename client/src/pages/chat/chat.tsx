@@ -6,7 +6,7 @@ import React, { useState, useEffect, FC } from "react";
 import "./chat.css";
 import Online from "../../components/online";
 import Invite from "../../components/invite";
-import { store } from "../../redux/RedaxStor.js";
+import { store } from "../../redux/reduxStor";
 import UserModаl from "../../components/usersModal";
 import MessagBox from "../../components/messagBox";
 import MesssagInpute from "../../components/messagInput";

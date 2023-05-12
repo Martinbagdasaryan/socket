@@ -1,8 +1,8 @@
 import React, { FC, MouseEventHandler, useState } from "react";
 
 import "./messagInput.css";
+import { store } from "../redux/reduxStor"
 import { ISocketAndRoom } from "../types/interfaces";
-import { store } from "../redux/RedaxStor"
 
 const MesssagInpute: FC<ISocketAndRoom> = ({ socket, roomID }) => {
   const [message, setMessage] = useState<string>("");

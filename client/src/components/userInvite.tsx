@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useState } from "react";
 import { IModal, IUser } from "../types/interfaces";
-import { store } from "../redux/RedaxStor"
 
 import "./userInvite.css";
+import { store } from "../redux/reduxStor"
 
 const UserInvait: FC<IModal> = ({ userElement, index, socket }) => {
   const [inviteUser, setInvaitUser] = useState<boolean>(false);

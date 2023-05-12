@@ -6,7 +6,7 @@ import axios from "axios";
 import "./home.css";
 import { IProps, IRoom, IUser } from "../../types/interfaces";
 import { useDispatch, useSelector } from "react-redux";
-import { store } from "../../redux/RedaxStor"
+import { store } from "../../redux/reduxStor"
 
 const Home: FC<IProps> = ({ setRoom, socket }) => {
   const navigate: ReturnType<typeof useNavigate> = useNavigate();
