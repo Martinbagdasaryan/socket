@@ -1,12 +1,13 @@
-import axios from "axios";
 import React, { FC, MouseEventHandler, useState } from "react";
 
 import "./messagInput.css";
 import { ISocketAndRoom } from "../types/interfaces";
+import { store } from "../redux/RedaxStor"
 
 const MesssagInpute: FC<ISocketAndRoom> = ({ socket, roomID }) => {
   const [message, setMessage] = useState<string>("");
-
+  const localName =store.getState().name.name
+  
   const handleSend: MouseEventHandler<HTMLButtonElement> = (
     e: React.SyntheticEvent
   ): void => {
@@ -17,13 +18,13 @@ const MesssagInpute: FC<ISocketAndRoom> = ({ socket, roomID }) => {
     const formattedTime = `${hours < 10 ? "0" + hours : hours}:${
       minutes < 10 ? "0" + minutes : minutes
     }`;
-    if (message.trim() && localStorage.getItem("user")) {
+    if (message.trim() && localName) {
       socket.emit("message", {
         id: `${socket.id}`,
         socketID: socket.id,
         roomI: roomID,
         text: message,
-        name: localStorage.getItem("user"),
+        name: localName,
         data: formattedTime,
       });
     }

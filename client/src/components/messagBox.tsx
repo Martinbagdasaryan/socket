@@ -1,10 +1,13 @@
 import axios from "axios";
 import React, { FC, useEffect, useState, useRef, RefObject } from "react";
+import { store } from "../redux/RedaxStor";
 
 import "./messagBox.css";
 import { IMessage, IArrMessages } from "../types/interfaces";
 
 const MessagBox: FC<IMessage> = ({ message, roomID }) => {
+  const localRoom = store.getState().room.room
+  const localName =store.getState().name.name
   const [userMessages, setUserMessages] = useState<IArrMessages[]>([]);
   const messageBoxRef: RefObject<HTMLDivElement> = useRef(null);
 
@@ -36,9 +39,9 @@ const MessagBox: FC<IMessage> = ({ message, roomID }) => {
               return (
                 <div key={index}>
                   <div>
-                    {element.roomI?.roomId === localStorage.getItem("room") ? (
+                    {element.roomI?.roomId === localName ? (
                       <div>
-                        {element.name === localStorage.getItem("user") ? (
+                        {element.name === localName ? (
                           <div>
                             <div className="message-rigth" key={element.id}>
                               <p className="message-text">{element.text}</p>
@@ -76,9 +79,9 @@ const MessagBox: FC<IMessage> = ({ message, roomID }) => {
               return (
                 <div key={index}>
                   <div>
-                    {element.roomI?.roomId === localStorage.getItem("room") ? (
+                    {element.roomI?.roomId === localRoom ? (
                       <div>
-                        {element.name === localStorage.getItem("user") ? (
+                        {element.name === localName ? (
                           <div>
                             <div className="message-rigth" key={element.id}>
                               <p className="message-text">{element.text}</p>

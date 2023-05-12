@@ -1,11 +1,14 @@
 import React, { FC, useEffect, useState } from "react";
 import { IModal, IUser } from "../types/interfaces";
+import { store } from "../redux/RedaxStor"
 
 import "./userInvite.css";
 
 const UserInvait: FC<IModal> = ({ userElement, index, socket }) => {
   const [inviteUser, setInvaitUser] = useState<boolean>(false);
-
+  const localRoom = store.getState().room.room
+  const localName =store.getState().name.name
+  
   useEffect(() => {
     socket.on("invite", (data) => {
       setInvaitUser(data);
@@ -18,15 +21,15 @@ const UserInvait: FC<IModal> = ({ userElement, index, socket }) => {
       user: el.user,
       socketId: el.socketId,
       room: el.room,
-      IUser: localStorage.getItem("user"),
-      IRoom: localStorage.getItem("room"),
+      IUser: localName,
+      IRoom: localRoom,
     });
     setInvaitUser(true);
   };
 
   return (
     <div className="user-name-and-button    ">
-      {userElement.room === localStorage.getItem("room") ? (
+      {userElement.room === localRoom ? (
         <div></div>
       ) : (
         <div key={index}>

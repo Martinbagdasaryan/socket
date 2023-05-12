@@ -1,9 +1,11 @@
 import Modal from "react-modal";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import React, { FC, useEffect, useState } from "react";
 
 import "./invite.css";
 import { IInvite, IRoom } from "../types/interfaces";
+import { store } from "../redux/RedaxStor";
 
 const Invite: FC<IInvite> = ({
   socket,
@@ -12,6 +14,11 @@ const Invite: FC<IInvite> = ({
   setSocketInvite,
   socketInvite,
 }) => {
+
+  const dispatch = useDispatch();
+
+  const localRoom = store.getState().room.room
+  const localName =store.getState().name.name
   const navigate: ReturnType<typeof useNavigate> = useNavigate();
 
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
@@ -62,8 +69,8 @@ const Invite: FC<IInvite> = ({
     e.preventDefault();
     const filterInvite = socketInvite.filter((el) => {
       return (
-        el.user !== localStorage.getItem("user") &&
-        el.room !== localStorage.getItem("room")
+        el.user !== localName &&
+        el.room !== localRoom
       );
     });
 
@@ -75,8 +82,8 @@ const Invite: FC<IInvite> = ({
   const enterRoom = async (): Promise<void> => {
     getInvate.map((element) => {
       if (
-        element.user === localStorage.getItem("user") &&
-        element.room === localStorage.getItem("room")
+        element.user === localName &&
+        element.room === localRoom
       ) {
         deletUserOnline();
         roomList.map((el) => {
@@ -87,13 +94,14 @@ const Invite: FC<IInvite> = ({
 
         socket.emit("newUser", {
           id: random,
-          user: localStorage.getItem("user"),
+          user: localName,
           socketId: socket.id,
           room: element.IRoom,
         });
 
+
         navigate("/");
-        localStorage.setItem("room", element.IRoom);
+        dispatch({ type: "ADDROOM", payload: element.IRoom });
       }
     });
 
@@ -110,7 +118,7 @@ const Invite: FC<IInvite> = ({
           {getInvate.map((el, index) => {
             return (
               <div key={index}>
-                {el.user === localStorage.getItem("user") ? (
+                {el.user === localName ? (
                   <div>
                     <h1>
                       {el.IUser} invites {el.IRoom} room{" "}

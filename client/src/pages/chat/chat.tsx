@@ -1,10 +1,12 @@
 import axios from "axios";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import React, { useState, useEffect, FC } from "react";
 
 import "./chat.css";
 import Online from "../../components/online";
 import Invite from "../../components/invite";
+import { store } from "../../redux/RedaxStor.js";
 import UserModаl from "../../components/usersModal";
 import MessagBox from "../../components/messagBox";
 import MesssagInpute from "../../components/messagInput";
@@ -17,7 +19,11 @@ import {
 } from "../../types/interfaces";
 
 const ChatPage: FC<IChat> = ({ socket, room }) => {
+  const dispatch = useDispatch();
+
   const navigate: ReturnType<typeof useNavigate> = useNavigate();
+  const localRoom = store.getState().room.room;
+  const localName = store.getState().name.name;
 
   const [user, setUser] = useState<IUser[]>([]);
   const [roomID, setRoomID] = useState<IRoom>();
@@ -53,10 +59,7 @@ const ChatPage: FC<IChat> = ({ socket, room }) => {
 
   const deletUserOnline = (): void => {
     userOnline.map((el: IUser) => {
-      if (
-        el.user === localStorage.getItem("user") &&
-        el.room === localStorage.getItem("room")
-      ) {
+      if (el.user === localName && el.room === localRoom) {
         socket.emit("deletElementForUser", el);
       }
     });
@@ -64,10 +67,7 @@ const ChatPage: FC<IChat> = ({ socket, room }) => {
 
   const deletUser = (): void => {
     user.map((el: IUser) => {
-      if (
-        el.user === localStorage.getItem("user") &&
-        el.room === localStorage.getItem("room")
-      ) {
+      if (el.user === localName && el.room === localRoom) {
         socket.emit("deletElementForUser", el);
       }
     });
@@ -76,13 +76,13 @@ const ChatPage: FC<IChat> = ({ socket, room }) => {
   const handleleave: React.MouseEventHandler<HTMLButtonElement> = (): void => {
     if (user.length === 0) {
       deletUserOnline();
-      localStorage.removeItem("room");
-      localStorage.removeItem("user");
+      dispatch({ type: "ADDROOM", payload: "" });
+      dispatch({ type: "ADDNAME", payload: "" });
       navigate("/");
     } else {
       deletUser();
-      localStorage.removeItem("room");
-      localStorage.removeItem("user");
+      dispatch({ type: "ADDROOM", payload: "" });
+      dispatch({ type: "ADDNAME", payload: "" });
       navigate("/");
     }
   };
@@ -90,11 +90,11 @@ const ChatPage: FC<IChat> = ({ socket, room }) => {
   const rooms: React.MouseEventHandler<HTMLButtonElement> = (): void => {
     if (user.length === 0) {
       deletUserOnline();
-      localStorage.removeItem("room");
+      dispatch({ type: "ADDROOM", payload: "" });
       navigate("/");
     } else {
       deletUser();
-      localStorage.removeItem("room");
+      dispatch({ type: "ADDROOM", payload: "" });
       navigate("/");
     }
   };
@@ -102,13 +102,13 @@ const ChatPage: FC<IChat> = ({ socket, room }) => {
   const getRooms: Function = async (): Promise<void> => {
     const res = await axios.get("http://localhost:4000/api/room");
     res.data.map((el: IRoom) => {
-      if (el.roomId === localStorage.getItem("room")) {
+      if (el.roomId === localRoom) {
         setRoomID(el);
       }
     });
   };
 
-  return localStorage.getItem("room") ? (
+  return localRoom ? (
     <div style={{ background: "#e9e9e9" }}>
       <header className="header">
         <button className="button" onClick={rooms}>
@@ -137,7 +137,7 @@ const ChatPage: FC<IChat> = ({ socket, room }) => {
             socketInvite.map((el, index) => {
               return (
                 <div key={index}>
-                  {el.user === localStorage.getItem("user") ? (
+                  {el.user === localName? (
                     <div>
                       <Invite
                         socket={socket}

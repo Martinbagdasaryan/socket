@@ -1,18 +1,25 @@
 import React, { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { persistStore } from "redux-persist";
 import axios from "axios";
 
 import "./home.css";
 import { IProps, IRoom, IUser } from "../../types/interfaces";
+import { useDispatch, useSelector } from "react-redux";
+import { store } from "../../redux/RedaxStor"
 
 const Home: FC<IProps> = ({ setRoom, socket }) => {
   const navigate: ReturnType<typeof useNavigate> = useNavigate();
+  const localName =store.getState().name.name
+console.log(localName,1);
 
   const [user, setUser] = useState<string>("");
   const [incorrectlyTypedName, setIncorrectlyTypedName] =
     useState<boolean>(false);
   const [users, setUsers] = useState<IUser[]>([]);
   const [rName, setRName] = useState<boolean>(false);
+
+  const dispatch = useDispatch();
 
   const random = Math.random();
 
@@ -60,10 +67,10 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
 
   const room = async (el: IRoom): Promise<void> => {
     let isUserExist = false;
-    const userData: string | null = localStorage.getItem("user");
+    const userData: string | null = localName;
 
     if (user !== "") {
-      if (userData === null) {
+      if (userData === '') {
         users?.map((elm: IUser) => {
           if (elm.user === user) {
             setRName(true);
@@ -71,7 +78,7 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
           }
         });
         if (!isUserExist) {
-          localStorage.setItem("user", user);
+          dispatch({ type: "ADDNAME", payload: user });
           setIncorrectlyTypedName(false);
           setRName(false);
 
@@ -79,7 +86,7 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
         }
       }
     } else {
-      if (userData !== null) {
+      if (userData !== '  ') {
         roomCheck(el, userData);
       } else {
         setIncorrectlyTypedName(true);
@@ -90,9 +97,14 @@ const Home: FC<IProps> = ({ setRoom, socket }) => {
   const roomCheck = (el: IRoom, userData: string | null) => {
     setRoom(el);
     socket.emit("room", el);
+    const persistor = persistStore(store);
 
+    const savedState = persistor.getState();
+   
+    
     let isRoomExist = false;
-    localStorage.setItem("room", el.roomId);
+
+    dispatch({ type: "ADDROOM", payload: el.roomId });
 
     users?.map((elm: IUser) => {
       if (elm.user === userData && elm.room === el.roomId) {

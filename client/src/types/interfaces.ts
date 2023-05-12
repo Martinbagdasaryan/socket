@@ -1,3 +1,4 @@
+import { CombinedState } from "redux";
 import { Socket } from "socket.io-client";
 
 export interface IMessage {
@@ -85,4 +86,31 @@ export interface IModal {
   socket: Socket;
   userElement: IUser;
   index: number;
+}
+
+export interface IAction<T = string> {
+  type: T;
+  payload: T;
+}
+
+export interface IReduxName {
+  (state: { name: string } | undefined, action: IAction<string>);
+}
+
+export interface IReduxRoom {
+  (state: { room: string } | undefined, action: IAction<string>);
+}
+
+export interface NameState {
+  name: string;
+}
+
+export interface RoomState {
+  room: string;
+}
+
+export interface IReducer{
+    room: RoomState;
+    name: NameState;
+
 }
