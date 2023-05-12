@@ -105,6 +105,8 @@ console.log(localName,1);
     let isRoomExist = false;
 
     dispatch({ type: "ADDROOM", payload: el.roomId });
+    console.log(dispatch({ type: "ADDROOM", payload: el.roomId }) );
+    
 
     users?.map((elm: IUser) => {
       if (elm.user === userData && elm.room === el.roomId) {
